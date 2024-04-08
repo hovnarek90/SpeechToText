@@ -19,10 +19,18 @@ const SpeechToText: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
       return;
     }
     const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
+    // recognition.lang = "hy-AM"; // Set language to Armenian
+    recognition.lang = "en-US"; // Set language to Armenian
+
+    recognition.interimResults = true; // Enable interim results
+    recognition.continuous = true; // Enable continuous recognition
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setTranscript(transcript);
+      let interimTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const word = event.results[i][0].transcript;
+        interimTranscript += word + " ";
+      }
+      setTranscript(interimTranscript);
     };
     recognition.start();
   };
@@ -40,7 +48,7 @@ const SpeechToText: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
 
         <h3 className={classes.title}>Speak with your voice</h3>
         <div className={classes.transcript}>
-          {transcript && <p>{transcript}</p>}
+          <p>{transcript}</p>
         </div>
         <button
           className={classes.buttonSpeech}

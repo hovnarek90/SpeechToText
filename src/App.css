@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-image: url("/public/images/speechtherapy.jpeg");
-  background-size: 80% 100%;
+  background-size: 80% auto;
   background-repeat: no-repeat;
   position: absolute;
   top: 0;
@@ -47,7 +47,11 @@
     transform: rotate(360deg);
   }
 }
-
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
 .buttonOpen {
   text-decoration: none;
   position: relative;
