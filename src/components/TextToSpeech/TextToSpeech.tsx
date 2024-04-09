@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useStyles } from "./TextToSpeech.styles";
 import classNames from "classnames";
+import useSpeechRecognition from "../useSpeechRecognition/useSpeechRecognition";
 
 type Props = {
   popUpIsOpen: boolean;
@@ -9,8 +10,9 @@ type Props = {
 
 const TextToSpeech: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
   const classes = useStyles({ popUpIsOpen });
-  
-  const [transcript, setTranscript] = useState<string>("");
+
+  const [transcript, setTranscript] = useSpeechRecognition();
+
   const [correctWords, setCorrectWords] = useState<string[]>([]);
 
   const paragraph =
@@ -30,32 +32,6 @@ const TextToSpeech: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
 
     setCorrectWords(correct);
   }, [transcript, paragraph]);
-
-  const startSpeechRecognition = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error("Speech recognition not supported in this browser");
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.continuous = true;
-    recognition.onresult = (event: any) => {
-      let interimTranscript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const word = event.results[i][0].transcript;
-        console.log(word);
-        interimTranscript += word + " ";
-      }
-      setTranscript(interimTranscript);
-    };
-
-    recognition.start();
-    console.log("recognition started", recognition);
-  };
 
   return (
     <div className={classes.containerPopUP}>
@@ -91,13 +67,9 @@ const TextToSpeech: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
           </p>
         </div>
 
-        <button
-          className={classes.buttonSpeech}
-          onClick={startSpeechRecognition}
-        >
+        <button className={classes.buttonSpeech} onClick={setTranscript}>
           <img src="./images/microphone.svg" alt="Microphone" />
         </button>
-
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { useStyles } from "./SpeechText.styles";
+import useSpeechRecognition from "../useSpeechRecognition/useSpeechRecognition";
 
 type Props = {
   popUpIsOpen: boolean;
@@ -8,32 +9,8 @@ type Props = {
 
 const SpeechToText: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
   const classes = useStyles({ popUpIsOpen });
-  const [transcript, setTranscript] = useState<string>("");
 
-  const startSpeechRecognition = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.error("Speech recognition not supported in this browser");
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    // recognition.lang = "hy-AM"; // Set language to Armenian
-    recognition.lang = "en-US"; // Set language to Armenian
-
-    recognition.interimResults = true; // Enable interim results
-    recognition.continuous = true; // Enable continuous recognition
-    recognition.onresult = (event: any) => {
-      let interimTranscript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const word = event.results[i][0].transcript;
-        interimTranscript += word + " ";
-      }
-      setTranscript(interimTranscript);
-    };
-    recognition.start();
-  };
+  const [transcript, setTranscript] = useSpeechRecognition();
 
   return (
     <div className={classes.containerPopUP}>
@@ -50,10 +27,7 @@ const SpeechToText: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
         <div className={classes.transcript}>
           <p>{transcript}</p>
         </div>
-        <button
-          className={classes.buttonSpeech}
-          onClick={startSpeechRecognition}
-        >
+        <button className={classes.buttonSpeech} onClick={setTranscript}>
           <img src="./images/microphone.svg" alt="Microphone" />
         </button>
       </div>
