@@ -10,7 +10,7 @@ type Props = {
 const SpeechToText: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
   const classes = useStyles({ popUpIsOpen });
 
-  const [transcript, setTranscript] = useSpeechRecognition();
+  const [transcript, setTranscript, started] = useSpeechRecognition();
 
   return (
     <div className={classes.containerPopUP}>

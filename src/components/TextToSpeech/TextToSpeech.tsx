@@ -11,46 +11,46 @@ type Props = {
 const TextToSpeech: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
   const classes = useStyles({ popUpIsOpen });
 
-  const [transcript, setTranscript] = useSpeechRecognition();
-
   const [correctWords, setCorrectWords] = useState<string[]>([]);
 
-  const paragraph =
-    "hi my dear pre-deployment friend, how are you doing today? dear";
+  const [transcript, setTranscript, started] = useSpeechRecognition();
+
+  const paragraph = "Hi my dear pre-deployment friend, how are you doing today? dear";
 
   useEffect(() => {
-    const transcriptWords: string[] = (transcript
-      .toLowerCase()
-      .match(/[a-z']+/g) || []) as string[];
-    const paragraphWords: string[] = (paragraph
-      .toLowerCase()
-      .match(/[a-z']+/g) || []) as string[];
+    const paragraphWords: string[] = (paragraph.toLowerCase().match(/[a-z']+/g) || []) as string[];
+    const transcriptWords: string[] = (transcript.toLowerCase().match(/[a-z']+/g) || []) as string[];
 
-    const correct = paragraphWords.filter((word) =>
-      transcriptWords.includes(word)
-    );
-
+    const L = Math.min(paragraphWords.length, transcriptWords.length);
+    const correct: string[] = [];
+    for (let i = 0; i < L; ++i) {
+      if (paragraphWords[i] === transcriptWords[i]) {
+        correct.push(paragraphWords[i]);
+      } else {
+        correct.push("1234");
+      }
+    }
+    // const correct = paragraphWords.filter((word) => transcriptWords.includes(word));
+    console.log("correct words",correct);
+    
     setCorrectWords(correct);
   }, [transcript, paragraph]);
 
   return (
     <div className={classes.containerPopUP}>
       <div className={classes.content}>
-        <button
-          className={classes.closeButton}
-          type="button"
-          onClick={() => setPopUpIsOpen(false)}
-        >
-          x
-        </button>
-
+        <button className={classes.closeButton} type="button" onClick={() => setPopUpIsOpen(false)} > x </button>
         <h3 className={classes.title}>Speak with your voice at the text</h3>
         <div className={classes.transcript}>
           <p>
             {paragraph.split(/\b/).map((word, index) => {
-              const colorOfText = correctWords.includes(
-                word.toLowerCase().replace(/[^\w\s']/gi, "")
-              );
+              // const colorOfText = correctWords.includes(
+                // word.toLowerCase().replace(/[^\w\s']/gi, "")
+              // );
+
+              const colorOfText = correctWords[index] === word;
+              console.log("Hamem", word, correctWords[index], index);
+              
 
               return (
                 <span
@@ -67,7 +67,12 @@ const TextToSpeech: React.FC<Props> = ({ popUpIsOpen, setPopUpIsOpen }) => {
           </p>
         </div>
 
-        <button className={classes.buttonSpeech} onClick={setTranscript}>
+        <button
+          className={classNames(classes.buttonSpeech, {
+            [classes.buttonSpeechActive]: started,
+          })}
+          onClick={setTranscript}
+        >
           <img src="./images/microphone.svg" alt="Microphone" />
         </button>
       </div>

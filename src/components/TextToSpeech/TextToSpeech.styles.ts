@@ -50,6 +50,9 @@ export const useStyles = createUseStyles({
       width: "70%",
     },
   },
+  buttonSpeechActive: {
+    border: "1px solid red",
+  },
   word: {
     fontSize: "20px",
     fontWeight: "bold",
@@ -62,7 +65,4 @@ export const useStyles = createUseStyles({
     color: "red",
   },
   transcript: {},
-
-
-  
 });
